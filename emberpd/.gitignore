@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
@@ -15,3 +16,11 @@
 /libpeerconnection.log
 npm-debug.log
 testem.log
+.DS_Store
+*/.DS_Store
+=======
+npm-debug.log
+pd.egg-info/
+pd/__pycache__/
+pd/scripts/__pycache__/
+>>>>>>> 3402fd4bf6b6a3c3a84a63696fc5336215596729

@@ -2,3 +2,4 @@ npm-debug.log
 pd.egg-info/
 pd/__pycache__/
 pd/scripts/__pycache__/
+.DS_Store
