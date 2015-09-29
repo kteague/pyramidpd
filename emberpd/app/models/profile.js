@@ -2,7 +2,7 @@ import DS from 'ember-data';
 
 var Profile = DS.Model.extend({
   firstName: DS.attr('string'),
-  lastLogin:  DS.attr('date')
+  lastLogin:  DS.attr('string')
 });
 
 Profile.reopenClass({

@@ -6,10 +6,6 @@
 
   <section id="main">
     <ul id="todo-list">
-      <li class="completed">
-        <input type="checkbox" class="toggle">
-        <label>Learn Ember.js</label><button class="destroy"></button>
-      </li>
       <li>
 		<input type="checkbox" class="toggle">
         <label>{{#link-to "about"}}About{{/link-to}}</label>
@@ -18,8 +14,22 @@
         <input type="checkbox" class="toggle">
         <label><a href="./profile/1">First Profile</a></label><button class="destroy"></button>
       </li>
-    </ul>
+	  
+	  {{#each profile as |item|}}
+	    <li>
+	      <input type="checkbox" class="toggle">
+	      <label>{{item.firstName}}</label><button class="destroy"></button>
+	    </li>
+	  {{/each}}
+    
+	  <li>
+	    <input type="checkbox" class="toggle">
+	  	<label>{{outlet}}</label>
+	  </li>
+	
+	</ul>
 
+	
     <input type="checkbox" id="toggle-all">
   </section>
 
@@ -42,6 +52,3 @@
 <footer id="info">
   <p>&copy; 2015 Passport Date Media Inc.</p>
 </footer>
-
-
-{{outlet}}
