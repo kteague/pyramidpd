@@ -9,8 +9,28 @@ from .models import (
     )
 
 
-@view_config(route_name='home', renderer='templates/login.pt')
-def my_view(request):
+@view_config(route_name='api', renderer='json')
+def api(request):
+    #import pdb; pdb.set_trace();
+
+    request.response.content_type = 'application/vnd.api+json'
+    
+    request.response.headers['Access-Control-Allow-Origin'] = 'http://localhost:4200'
+    request.response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, Content-Type'
+    request.response.headers['Access-Control-Allow-Credentials'] = 'true'
+    request.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE'
+    
+    return {
+    'data': {
+        'type':'profile',
+        'id':'1',
+        'attributes': {
+          'firstname':'Jimbo','lastlogin':'August 24, 2015',
+         },
+    },
+    }
+    
+    
     try:
         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
     except DBAPIError:
@@ -18,19 +38,4 @@ def my_view(request):
     return {'one': one, 'project': 'pd'}
 
 
-conn_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to run the "initialize_pd_db" script
-    to initialize your database tables.  Check your virtual
-    environment's "bin" directory for this script and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""
-
+conn_err_msg = """Can not connect to database. Fix!"""
