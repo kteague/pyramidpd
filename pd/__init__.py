@@ -1,10 +1,25 @@
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
-
+from pyramid.events import NewRequest
 from .models import (
     DBSession,
     Base,
-    )
+)
+
+
+def add_cors_headers_response_callback(event):
+    def cors_headers(request, response):
+        
+        # This is being set in Apache ...
+        # 'Access-Control-Allow-Origin': '*',
+        
+        response.headers.update({
+        'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Max-Age': '1728000',
+        })
+    event.request.add_response_callback(cors_headers)
 
 
 def main(global_config, **settings):
@@ -16,6 +31,12 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include('pyramid_chameleon')
     config.add_static_view('static', 'static', cache_max_age=3600)
-    config.add_route('api', 'api/1/profiles/1')
+    config.add_subscriber(add_cors_headers_response_callback, NewRequest)
+    
+    # routes
+    config.add_route('get_profile', 'api/1/profiles/{one}')
+    config.add_route('create_profile', 'api/1/profiles')
+    
     config.scan()
     return config.make_wsgi_app()
+
