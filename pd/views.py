@@ -32,20 +32,20 @@ def get_profile(request):
 
 @view_config(route_name='create_profile', renderer='json')
 def create_profile(request):
-    #import pdb; pdb.set_trace();
     request.response.status = '201 Created'
     request.response.content_type = 'application/vnd.api+json'
     request.response.headers['Location'] = 'http://localhost/api/1/profiles/2'
     
-    return {
+    res = {
           "data": {
-            "type": "profile",
+            "type": "profiles",
             "id": "2",
             "attributes": {
                 "username":'bob',"orientation":'straight',"gender":'male',"firstname":'kevin',"lastlogin":'today'
             },
           },
     }
-    
+    #import pdb; pdb.set_trace();
+    return res
 
 conn_err_msg = """Can not connect to database. Fix!"""
