@@ -1,24 +1,24 @@
-Passport Date web application
-=============================
+pyramidpd
+=========
 
-So you want to hack on this web app?
+This is the back end to the Passport Date application. It consists of
+a Pyramid Python 3 web application acting as a JSON API. There are also
+files to manage the PostgreSQL database in this project. As well as notes
+on setting up a reverse proxy and other deployment related bits.
+
+You will need emberpd to serve the front end.
+
 
 Getting Started
 ---------------
 
-- Get node.js (v0.12.7+): https://nodejs.org/
-
-- Install ember:
-  # npm install -g ember-cli
-  # npm install -g phantomjs2
+- Get some Python 3. Preferably Python 3.5.
   
-- (optional) Install watchman: https://facebook.github.io/watchman/docs/install.html
-  
-- To install Python packages and set-up: ./bin/python setup.py develop
+- To install Python packages and set-up: python setup.py develop
 
 - Install a PostgreSQL database and set the DSN in development.ini
 
-- To initialize database: ./bin/initialize_pd_db development.ini
+- To initialize database: initialize_pd_db development.ini
 
 - Set-up a ReverseProxy to deal with CORS issues.
 

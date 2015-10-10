@@ -1,12 +1,8 @@
 from pyramid.response import Response
 from pyramid.view import view_config
-
 from sqlalchemy.exc import DBAPIError
-
-from .models import (
-    DBSession,
-    MyModel,
-    )
+from pd.models import session
+from pd.models import Signup
 
 
 @view_config(route_name='get_profile', renderer='json')
@@ -24,17 +20,20 @@ def get_profile(request):
     }
     
     try:
-        one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
+        one = session.query(Sigup).filter(Signup.id == 'one').first()
     except DBAPIError:
         return Response(conn_err_msg, content_type='text/plain', status_int=500)
     return {'one': one, 'project': 'pd'}
 
 
-@view_config(route_name='create_profile', renderer='json')
-def create_profile(request):
+@view_config(route_name='create_signup', renderer='json')
+def create_signup(request):
+    import pdb; pdb.set_trace();
+    Signup()
+    
     request.response.status = '201 Created'
     request.response.content_type = 'application/vnd.api+json'
-    request.response.headers['Location'] = 'http://localhost/api/1/profiles/2'
+    request.response.headers['Location'] = 'http://localhost/api/1/signups/2'
     
     res = {
           "data": {
@@ -45,7 +44,7 @@ def create_profile(request):
             },
           },
     }
-    #import pdb; pdb.set_trace();
+
     return res
 
 conn_err_msg = """Can not connect to database. Fix!"""

@@ -2,7 +2,7 @@ from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 from pyramid.events import NewRequest
 from .models import (
-    DBSession,
+    session,
     Base,
 )
 
@@ -26,7 +26,7 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine)
+    session.configure(bind=engine)
     Base.metadata.bind = engine
     config = Configurator(settings=settings)
     config.include('pyramid_chameleon')
@@ -35,7 +35,7 @@ def main(global_config, **settings):
     
     # routes
     config.add_route('get_profile', 'api/1/profiles/{one}')
-    config.add_route('create_profile', 'api/1/profiles')
+    config.add_route('create_signup', 'api/1/signups')
     
     config.scan()
     return config.make_wsgi_app()
