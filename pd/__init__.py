@@ -30,6 +30,7 @@ def main(global_config, **settings):
     Base.metadata.bind = engine
     config = Configurator(settings=settings)
     config.include('pyramid_chameleon')
+    config.include('pyramid_mailer')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_subscriber(add_cors_headers_response_callback, NewRequest)
     

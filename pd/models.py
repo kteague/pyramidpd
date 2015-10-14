@@ -273,7 +273,9 @@ class Signup(Base):
     country = Column(ENUM(*countries, name='countries'), nullable=False)
     city = Column(String(500), nullable=False)
     birthdate = Column(Date(), nullable=False)
-    email = Column(String(1500), nullable=False)
+    email = Column(String(1500), nullable=False, unique=True)
+    secret_key = Column(String(20), nullable=False)
+
 
 Index('signup_index', Signup.id, unique=True)
 

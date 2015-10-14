@@ -47,6 +47,37 @@ RewriteRule ^(.*)$ $1 [R=200,L]
 </IfModule>
 
 
+- Set-up a local mail rely to enable sign-up functionality. For Mac OS X edit /etc/postfix/main.cf
+and add:
+
+	relayhost=smtp.gmail.com:587
+	# Enable SASL authentication in the Postfix SMTP client.                                            smtp_sasl_auth_enable=yes
+	smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
+	smtp_sasl_security_options=noanonymous
+	smtp_sasl_mechanism_filter=plain
+	# Enable Transport Layer Security (TLS), i.e. SSL.                                                  smtp_use_tls=yes
+	smtp_tls_security_level=encrypt
+	tls_random_source=dev:/dev/urandom
+
+ Then add an account to /etc/postfix/sasl_passwd:
+ 
+	smtp.gmail.com:587 your_email@gmail.com:your_password
+
+ Create the password file:
+ 
+	postmap /etc/postfix/sasl_passwd
+
+ Then start/restart postfix:
+  
+    postfix start
+	postfix reload
+
+ Test it and debug it:
+
+	date | mail -s testing your_email@gmail.com
+	tail -n 100 /var/log/mail.log
+
+
 - To serve it all up!
 
  $ pg_ctl start

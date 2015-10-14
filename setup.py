@@ -19,6 +19,7 @@ requires = [
     'waitress',
     'psycopg2',
     'requests',
+    'pyramid_mailer',
     ]
 
 setup(name='pd',
