@@ -36,6 +36,8 @@ def main(global_config, **settings):
     
     # routes
     config.add_route('get_profile', 'api/1/profiles/{one}')
+    config.add_route('edit_profile', 'api/1/profiles/{one}')
+    config.add_route('set_password', 'api/1/set_password')
     config.add_route('create_signup', 'api/1/signups')
     
     config.scan()

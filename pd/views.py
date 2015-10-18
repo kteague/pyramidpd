@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 from pd.models import session
 from pd.models import Signup, Profile
+from pd.crypto import encode_password
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 import datetime
@@ -9,7 +10,7 @@ import random
 import string
 
 
-@view_config(route_name='get_profile', renderer='json')
+@view_config(route_name='get_profile', request_method='GET', renderer='json')
 def get_profile(request):
     
     return {
@@ -22,6 +23,22 @@ def get_profile(request):
         },
     }
 
+
+@view_config(route_name='edit_profile', request_method='PUT', renderer='json')
+def edit_profile(request):
+    pass
+
+    
+@view_config(route_name='set_password', renderer='json')
+def set_password(request):
+    k = request.POST['k']
+    signup_id = request.POST['id']
+    password = request.POST['p']
+    
+    signup = session.query(Signup).filter(Signup.id==signup_id)[0]
+    profile = session.query(Profile).filter(Profile.email==signup.email)[0]
+    profile.password = encode_password(password)
+    
 
 def create_signup(request):
     data = json.loads(request.body.decode('UTF-8'))['data']['attributes']
@@ -77,13 +94,14 @@ def validate_signup(request):
         return 'foo!'
     
     profile = Profile()
+    profile.id = str(signup.id)
     profile.orientation = signup.orientation
     profile.gender = signup.gender
     profile.country = signup.country
     profile.city = signup.city
     profile.birthdate = signup.birthdate
     profile.email = signup.email
-    session.add(signup)
+    session.add(profile)
     session.flush()
 
     # handle response

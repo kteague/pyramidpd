@@ -288,10 +288,10 @@ class Profile(Base):
     city = Column(String(500), nullable=False)
     birthdate = Column(Date(), nullable=False)
     email = Column(String(1500), nullable=False)
-    password = Column(String(500), nullable=False)
-    name = Column(String(500), nullable=False)
+    password = Column(String(500))
+    name = Column(String(500))
     about_me = Column(Text)
     interests = Column(Text)
     looking_for = Column(Text)
 
-Index('profile_index', Signup.id, unique=True)
+Index('profile_index', Profile.id, unique=True)
