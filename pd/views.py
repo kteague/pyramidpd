@@ -92,17 +92,18 @@ def validate_signup(request):
         # probably just a 200 and an error message is OK?
         request.response.status = '400 Bad Request'
         return 'foo!'
-    
-    profile = Profile()
-    profile.id = str(signup.id)
-    profile.orientation = signup.orientation
-    profile.gender = signup.gender
-    profile.country = signup.country
-    profile.city = signup.city
-    profile.birthdate = signup.birthdate
-    profile.email = signup.email
-    session.add(profile)
-    session.flush()
+
+    if not session.query(Profile).filter(Profile.id==request.GET['id']):    
+        profile = Profile()
+        profile.id = str(signup.id)
+        profile.orientation = signup.orientation
+        profile.gender = signup.gender
+        profile.country = signup.country
+        profile.city = signup.city
+        profile.birthdate = signup.birthdate
+        profile.email = signup.email
+        session.add(profile)
+        session.flush()
 
     # handle response
     request.response.status = '200 OK'
@@ -120,7 +121,6 @@ def validate_signup(request):
              'city':signup.city,
              'birthdate':signup.birthdate.isoformat(),
              'email':signup.email,
-             'profile_id':profile.id,
          },
        },
     }
