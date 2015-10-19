@@ -4,13 +4,31 @@ from pd.models import Signup, Profile
 from pd.crypto import encode_password
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
+from pyramid.security import remember, forget
 import datetime
 import json
 import random
 import string
 
 
-@view_config(route_name='get_profile', request_method='GET', renderer='json')
+@view_config(route_name='sign_in', renderer='json')
+def sign_in(request):
+    identification = request.POST['identification']
+    password = request.POST['password']
+    profile = session.query(Profile).filter(Profile.email==identification)[0]
+    
+    algorithm, iterations, salt, hash = profile.password.split('$', 3)
+    if profile.password == encode_password(password, salt):
+        # authentication success
+        headers = remember(request, identification)
+        # to-do: make a token without extracting it from a Cookie header
+        token = headers[0][1].split('"')[1]
+        return token
+    else:
+        return 'fail?'
+
+
+@view_config(route_name='get_profile', request_method='GET', renderer='json', permission='view')
 def get_profile(request):
     
     return {
@@ -31,14 +49,16 @@ def edit_profile(request):
     
 @view_config(route_name='set_password', renderer='json')
 def set_password(request):
-    k = request.POST['k']
+    secret_key = request.POST['k']
     signup_id = request.POST['id']
     password = request.POST['p']
     
     signup = session.query(Signup).filter(Signup.id==signup_id)[0]
     profile = session.query(Profile).filter(Profile.email==signup.email)[0]
-    profile.password = encode_password(password)
     
+    if signup.secret_key == secret_key:
+        profile.password = encode_password(password)
+
 
 def create_signup(request):
     data = json.loads(request.body.decode('UTF-8'))['data']['attributes']

@@ -71,14 +71,15 @@ def pbkdf2(password, salt, iterations, dklen=0):
     return b''.join(T) + F(l)[:r]
 
 
-def encode_password(password):
+def encode_password(password, salt=None):
     algorithm = "pbkdf2_sha256"
     iterations = 100000
-    salt = ''.join(
-        random.SystemRandom().choice(
-            string.ascii_letters + string.digits
-        ) for i in range(12)
-    )
+    if not salt:
+        salt = ''.join(
+            random.SystemRandom().choice(
+                string.ascii_letters + string.digits
+            ) for i in range(12)
+        )
     assert password is not None    
     hash = pbkdf2(password, salt, iterations)
     hash = base64.b64encode(hash).decode('ascii').strip()
