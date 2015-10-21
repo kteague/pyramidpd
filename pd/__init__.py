@@ -1,5 +1,5 @@
 from pyramid.config import Configurator
-from pyramid.authentication import AuthTktAuthenticationPolicy
+from pd.authentication import EmberAuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.events import NewRequest
 from sqlalchemy import engine_from_config
@@ -33,9 +33,7 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_subscriber(add_cors_headers_response_callback, NewRequest)
     config.set_authentication_policy(
-        AuthTktAuthenticationPolicy(
-            'secret_in_development_XXX', hashalg='sha512',
-        )
+        EmberAuthTktAuthenticationPolicy('secret_in_development_XXX')
     )
     config.set_authorization_policy(
         ACLAuthorizationPolicy()

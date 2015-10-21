@@ -20,12 +20,13 @@ def sign_in(request):
     algorithm, iterations, salt, hash = profile.password.split('$', 3)
     if profile.password == encode_password(password, salt):
         # authentication success
-        headers = remember(request, identification)
-        # to-do: make a token without extracting it from a Cookie header
-        token = headers[0][1].split('"')[1]
-        return token
+        authtkt_ticket = remember(request, identification)
+        import pdb; pdb.set_trace();
+        return {'token':authtkt_ticket,'email':profile.email}
     else:
-        return 'fail?'
+        request.response.status = '401 Unauthorized'
+        request.response.content_type = 'application/vnd.api+json'
+        return {}
 
 
 @view_config(route_name='get_profile', request_method='GET', renderer='json', permission='view')
