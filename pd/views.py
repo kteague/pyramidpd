@@ -15,14 +15,18 @@ import string
 def sign_in(request):
     identification = request.POST['identification']
     password = request.POST['password']
-    profile = session.query(Profile).filter(Profile.email==identification)[0]
+    try:
+        profile = session.query(Profile).filter(Profile.email==identification)[0]
+    except IndexError:
+        request.response.status = '401 Unauthorized'
+        request.response.content_type = 'application/vnd.api+json'
+        return {}
     
     algorithm, iterations, salt, hash = profile.password.split('$', 3)
     if profile.password == encode_password(password, salt):
         # authentication success
         authtkt_ticket = remember(request, identification)
-        import pdb; pdb.set_trace();
-        return {'token':authtkt_ticket,'email':profile.email}
+        return {'token':authtkt_ticket,'email':identification}
     else:
         request.response.status = '401 Unauthorized'
         request.response.content_type = 'application/vnd.api+json'

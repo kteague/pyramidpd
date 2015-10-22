@@ -123,11 +123,18 @@ class EmberAuthTktAuthenticationPolicy(CallbackAuthenticationPolicy):
         self.callback = callback
 
     def unauthenticated_userid(self, request):
-        """ The userid key within the auth_tkt cookie."""
-        return 'XXX?'
-        #result = self.cookie.identify(request)
-        #if result:
-        #    return result['userid']
+        """Return the identification if the user has a valid token"""
+        auth = request.headers.get('Authorization')
+        if auth:
+            ticket, identification = auth.split(':')
+            confirm_ticket = AuthTicket(
+                self.secret,
+                identification,
+                request.remote_addr,
+                hashalg=self.hashalg
+            )
+            if confirm_ticket.digest() == ticket:
+                return identification
 
     def remember(self, request, principal):
         """Returns an AuthTkt ticket
@@ -142,6 +149,6 @@ class EmberAuthTktAuthenticationPolicy(CallbackAuthenticationPolicy):
         return self.ticket.digest()
 
     def forget(self, request):
-        pass
+        return []
 
 

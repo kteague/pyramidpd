@@ -8,12 +8,9 @@ from sqlalchemy import (
     )
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import (
-    scoped_session,
-    sessionmaker,
-    )
+from sqlalchemy.orm import scoped_session, sessionmaker
 from zope.sqlalchemy import ZopeTransactionExtension
-
+from pyramid.security import Allow, Everyone, Authenticated
 
 session = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -295,3 +292,10 @@ class Profile(Base):
     looking_for = Column(Text)
 
 Index('profile_index', Profile.id, unique=True)
+
+class RootFactory(object):
+    __acl__ = [(Allow, Authenticated, 'view'),]
+    def __init__(self, request):
+        #auth = request.headers.get('Authorization')
+        pass
+
