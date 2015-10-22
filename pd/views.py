@@ -35,13 +35,28 @@ def sign_in(request):
 
 @view_config(route_name='get_profile', request_method='GET', renderer='json', permission='view')
 def get_profile(request):
+    request.response.content_type = 'application/vnd.api+json'
+    profileid = request.matchdict['profileid']
+    try:
+        profile = session.query(Profile).filter(Profile.id==profileid)[0]
+    except IndexError:
+        request.response.status = '404 Not Found'
+        return {}
     
     return {
         'data': {
             'type':'profile',
-            'id':'1',
+            'id':profileid,
             'attributes': {
-              'firstname':'Jimbo','lastlogin':'August 24, 2015',
+              'orientation':profile.orientation,
+              'gender':profile.gender,
+              'city':profile.city,
+              'country':profile.country,
+              'birthdate':str(profile.birthdate),
+              'name':profile.name,
+              'about_me':profile.about_me,
+              'interests':profile.interests,
+              'looking_for':profile.looking_for
              },
         },
     }

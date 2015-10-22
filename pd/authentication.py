@@ -24,7 +24,9 @@ class AuthTicket(object):
         self.secret = secret
         self.userid = userid
         self.ip = ip
-        self.time = time_mod.time()
+        # to-do: fixed time for the time being ...
+        # time_mod.time() - time needs to be passed in header
+        self.time = 1445498140.195288
         self.hashalg = hashalg
 
     def digest(self):
@@ -133,6 +135,7 @@ class EmberAuthTktAuthenticationPolicy(CallbackAuthenticationPolicy):
                 request.remote_addr,
                 hashalg=self.hashalg
             )
+            #import pdb; pdb.set_trace();
             if confirm_ticket.digest() == ticket:
                 return identification
 
