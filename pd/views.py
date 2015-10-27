@@ -20,7 +20,7 @@ def sign_in(request):
     except IndexError:
         request.response.status = '401 Unauthorized'
         request.response.content_type = 'application/vnd.api+json'
-        return {}
+        return {'message':'Account does not exist.'}
     
     algorithm, iterations, salt, hash = profile.password.split('$', 3)
     if profile.password == encode_password(password, salt):
@@ -30,7 +30,7 @@ def sign_in(request):
     else:
         request.response.status = '401 Unauthorized'
         request.response.content_type = 'application/vnd.api+json'
-        return {}
+        return {'message':'Password does not match.'}
 
 
 @view_config(route_name='get_profile', request_method='GET', renderer='json', permission='view')
