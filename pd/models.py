@@ -286,6 +286,8 @@ class Profile(Base):
     birthdate = Column(Date(), nullable=False)
     email = Column(String(1500), nullable=False)
     password = Column(String(500))
+    password_reset_key = Column(String(20))
+    password_reset_date = Column(Date()) 
     name = Column(String(500))
     about_me = Column(Text)
     interests = Column(Text)

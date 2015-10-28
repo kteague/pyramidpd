@@ -66,7 +66,38 @@ def get_profile(request):
 def edit_profile(request):
     pass
 
-    
+
+@view_config(route_name='reset_password', renderer='json')
+def reset_password(request):
+    email = request.POST['email']
+    try:
+        profile = session.query(Profile).filter(Profile.email==email)[0]
+    except IndexError:
+        request.response.status = '404 Not Found'
+        return {'message':'Email not found','code':'0'}
+    profile.password_reset_key  = ''.join(random.choice(
+        string.ascii_letters + string.digits) for _ in range(20))
+    now = datetime.datetime.now()
+    profile.password_reset_date = datetime.date(now.year, now.month, now.day)
+    session.flush()
+    mailer = get_mailer(request)
+    body = """
+Someone requested a password reset for your account.
+
+If this was you, then you can click on this link to change your password:
+
+http://localhost/set_new_password?id=%s&k=%s
+    """ % (profile.id, profile.password_reset_key)
+    message = Message(
+      subject="Passpord Date password reset request",
+      sender="accounts@passportdate.com",
+      recipients=[profile.email],
+      body=body,
+    )
+    mailer.send(message)
+    return {'message':'Password request sent. Check your email.', 'code':'1'}
+
+
 @view_config(route_name='set_password', renderer='json')
 def set_password(request):
     secret_key = request.POST['k']
