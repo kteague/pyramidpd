@@ -74,7 +74,7 @@ def reset_password(request):
         profile = session.query(Profile).filter(Profile.email==email)[0]
     except IndexError:
         request.response.status = '404 Not Found'
-        return {'message':'Email not found','code':'0'}
+        return {'message':'Email not found','code':'1'}
     profile.password_reset_key  = ''.join(random.choice(
         string.ascii_letters + string.digits) for _ in range(20))
     now = datetime.datetime.now()
@@ -86,8 +86,8 @@ Someone requested a password reset for your account.
 
 If this was you, then you can click on this link to change your password:
 
-http://localhost/set_new_password?id=%s&k=%s
-    """ % (profile.id, profile.password_reset_key)
+http://localhost/set_new_password?id=%s&k=%s&email=%s
+    """ % (profile.id, profile.password_reset_key, email)
     message = Message(
       subject="Passpord Date password reset request",
       sender="accounts@passportdate.com",
@@ -95,20 +95,25 @@ http://localhost/set_new_password?id=%s&k=%s
       body=body,
     )
     mailer.send(message)
-    return {'message':'Password request sent. Check your email.', 'code':'1'}
+    return {'message':'Password request sent. Check your email.', 'code':'0'}
 
 
 @view_config(route_name='set_password', renderer='json')
 def set_password(request):
     secret_key = request.POST['k']
-    signup_id = request.POST['id']
+    user_id = request.POST['id']
     password = request.POST['p']
+    is_for_profile = request.POST.get('n', False);
     
-    signup = session.query(Signup).filter(Signup.id==signup_id)[0]
-    profile = session.query(Profile).filter(Profile.email==signup.email)[0]
-    
-    if signup.secret_key == secret_key:
-        profile.password = encode_password(password)
+    if not is_for_profile:
+        signup = session.query(Signup).filter(Signup.id==user_id)[0]
+        profile = session.query(Profile).filter(Profile.email==signup.email)[0]
+        if signup.secret_key == secret_key:
+            profile.password = encode_password(password)
+    else:
+        profile = session.query(Profile).filter(Profile.id==user_id)[0]
+        if profile.password_reset_key == secret_key:
+            profile.password = encode_password(password)
 
 
 def create_signup(request):
